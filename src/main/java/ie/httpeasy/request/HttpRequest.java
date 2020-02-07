@@ -3,11 +3,18 @@
  */
 package ie.httpeasy.request;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
 
 public class HttpRequest {
     private Socket client;
+    private DataOutputStream toServer;
+    private DataInputStream fromServer;
     private int port;
 
     public HttpRequest(String serverName) {
@@ -18,11 +25,37 @@ public class HttpRequest {
         try {
             client = new Socket(serverName, port);
             this.port = port;
+            OutputStream tempout = client.getOutputStream();
+            InputStream tempin = client.getInputStream();
+            toServer = new DataOutputStream(tempout);
+            fromServer = new DataInputStream(tempin);
         } catch (IOException e) {
             client = null;
             this.port = -1;
-            System.out.println("Connection failed!");
+            System.err.println("Connection failed!");
         }
+    }
+
+    public String get(String value) {
+        try {
+            toServer.writeBytes("GET " + value + " \r\n\r\n");
+        } catch (IOException e) {
+            System.err.println("Failed to write to output stream!");
+            return null;
+        }
+        StringBuilder builder = new StringBuilder(1024);
+        try {
+            char c;
+            do {
+                c = (char)fromServer.readByte();
+                builder.append(c);
+            } while(c != '\0');
+        } catch (EOFException e) {
+            
+        } catch (IOException e) {
+            System.err.println("Failed to read from input stream!");
+        }
+        return builder.toString();
     }
 
     public boolean isConnectionSuccessful() {
