@@ -75,17 +75,4 @@ public class HtmlFormatter {
     private static boolean isMetaTag(String text) {
         return text.contains("meta");
     }
-
-    private static String escapeToSymbol(String escape) {
-        switch (escape) {
-            case "lt":
-                return "<";
-            case "gt":
-                return ">";
-            case "amp":
-                return "&";
-            default:
-                return null;
-        }
-    }
 }
