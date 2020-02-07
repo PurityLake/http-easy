@@ -16,6 +16,8 @@ public class HttpRequest {
     private DataOutputStream toServer;
     private DataInputStream fromServer;
     private int port;
+    private String request;
+    private String storedResult;
 
     public HttpRequest(String serverName) {
         this(serverName, 80);
@@ -36,26 +38,42 @@ public class HttpRequest {
         }
     }
 
-    public String get(String value) {
-        try {
-            toServer.writeBytes("GET " + value + " \r\n\r\n");
-        } catch (IOException e) {
-            System.err.println("Failed to write to output stream!");
-            return null;
+    public HttpRequest setRequest(String request) {
+        this.request = request;
+        return this;
+    }
+
+    public HttpRequest get(String request) {
+        return this.setRequest(request).get();
+    }
+
+    public HttpRequest get() {
+        if (!request.isEmpty()) {
+            try {
+                toServer.writeBytes("GET " + request + " \r\n\r\n");
+            } catch (IOException e) {
+                System.err.println("Failed to write to output stream!");
+                return null;
+            }
+            StringBuilder builder = new StringBuilder(1024);
+            try {
+                char c;
+                do {
+                    c = (char)fromServer.readByte();
+                    builder.append(c);
+                } while(c != '\0');
+            } catch (EOFException e) {
+                
+            } catch (IOException e) {
+                System.err.println("Failed to read from input stream!");
+            }
+            storedResult = builder.toString();
         }
-        StringBuilder builder = new StringBuilder(1024);
-        try {
-            char c;
-            do {
-                c = (char)fromServer.readByte();
-                builder.append(c);
-            } while(c != '\0');
-        } catch (EOFException e) {
-            
-        } catch (IOException e) {
-            System.err.println("Failed to read from input stream!");
-        }
-        return builder.toString();
+        return this;
+    }
+
+    public String getStored() {
+        return storedResult;
     }
 
     public boolean isConnectionSuccessful() {

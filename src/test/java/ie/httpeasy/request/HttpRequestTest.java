@@ -41,7 +41,8 @@ public class HttpRequestTest {
     }
     @Test public void testConnection() {
         HttpRequest classUnderTest = new HttpRequest(testSuccessURL);
-        LOGGER.info(formatText(classUnderTest.get("/")));
+        LOGGER.info(formatText(classUnderTest.get("/").getStored()));
+        //LOGGER.info(formatText(classUnderTest.setRequest("/").get().getStored()));
         assertTrue("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionSuccessful());
         assertFalse("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionFailed());
         classUnderTest = new HttpRequest(testFailURL);
