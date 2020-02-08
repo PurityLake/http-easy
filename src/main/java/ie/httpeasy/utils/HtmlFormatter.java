@@ -3,76 +3,76 @@ package ie.httpeasy.utils;
 public class HtmlFormatter {
     private static int indentSize = 1;
     public static String formatText(String text) {
-        boolean _isMetaTag = false;
-        boolean _isEndTag = false;
-        boolean skip = false;
+        boolean inScriptOrStyle = false, lastTagNoDepth = false;
         StringBuilder builder = new StringBuilder(text.length());
+        boolean addToCurr = false;
+        StringBuilder curr = new StringBuilder(1024);
         int depth = 0;
-        int i, j;
         char c;
-        for (i = 0; i < text.length(); ++i) {
+
+        for (int i = 0; i < text.length(); ++i) {
             c = text.charAt(i);
-            switch (c) {
-                case '<':
-                    String tag = "";
-                    for (j = i + 1; j < text.length() 
-                        && text.charAt(j) != ' '
-                        && text.charAt(j) != '>'; ++j) {
-                        tag += text.charAt(j);
+            if (c == '<') {
+                if (inScriptOrStyle) {
+                    if (text.charAt(i + 1) == '/') {
+                        addToCurr = true;
+                        inScriptOrStyle = false;
                     }
-                    if (isScriptTag(tag) || isStyleTag(tag)) {
-                        skip = !tag.startsWith("/");
-                        i = j;
+                } else {
+                    addToCurr = true;
+                }
+            }
+            if (addToCurr) {
+                curr.append(c);
+            } else {
+                builder.append(c);
+                if (c == '\n') {
+                    ++depth;
+                    for (int j = 0; j < depth * indentSize; ++j) {
+                        builder.append(' ');
                     }
-                    if (isMetaTag(tag)) {
-                        _isMetaTag = true;
+                    --depth;
+                }
+            }
+            if (c == '>' && !inScriptOrStyle) {
+                String currString = curr.toString();
+                if (currString.startsWith("<script")
+                        || currString.startsWith("<style")) {
+                    inScriptOrStyle = true;
+                }
+                if (!currString.startsWith("<!doctype")
+                        && !currString.startsWith("<html")
+                        && !currString.startsWith("<meta")
+                        && !currString.startsWith("<input")
+                        && !currString.startsWith("<br")) {
+                    if (!currString.startsWith("</")) {
+                        ++depth;
+                    } 
+                    //++depth;
+                    lastTagNoDepth = false;
+                } else {
+                    lastTagNoDepth = true;
+                }
+                builder.append('\n');
+                for (int j = 0; j < depth * indentSize; ++j) {
+                    builder.append(' ');
+                }
+                builder.append(currString);
+                curr.setLength(0);
+                addToCurr = false;
+                if (i + 1 < text.length() && text.charAt(i+1) != '<') {
+                    builder.append('\n');
+                    ++depth;
+                    for (int j = 0; j < depth * indentSize; ++j) {
+                        builder.append(' ');
                     }
-                    if (!skip) {
-                        if (text.charAt(i + 1) == '/') {
-                            _isEndTag = true;
-                            --depth;
-                            builder.append('\n');
-                            for (j = 0; j < indentSize * depth; ++j) {
-                                builder.append(' ');
-                            }
-                        }
-                        builder.append(c);
-                    }
-                    break;
-                case '>':
-                    if (!skip) {
-                        if (!_isMetaTag && !_isEndTag) {
-                            ++depth;
-                        } else {
-                            _isMetaTag = false;
-                            _isEndTag = false;
-                        }
-                        builder.append(c);
-                        builder.append('\n');
-                        for (j = 0; j < indentSize * depth; ++j) {
-                            builder.append(' ');
-                        }
-                    }
-                    break;
-                default:
-                    if (!skip) {
-                        builder.append(c);
-                        break;
-                    }
+                    --depth;
+                }
+                if (currString.startsWith("</")) {
+                    --depth;
+                }
             }
         }
         return builder.toString();
-    }
-
-    private static boolean isScriptTag(String text) {
-        return text.contains("script");
-    }
-
-    private static boolean isStyleTag(String text) {
-        return text.contains("style");
-    }
-
-    private static boolean isMetaTag(String text) {
-        return text.contains("meta");
     }
 }
