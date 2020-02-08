@@ -3,7 +3,7 @@ package ie.httpeasy.utils;
 public class HtmlFormatter {
     private static int indentSize = 1;
     public static String formatText(String text) {
-        boolean inScriptOrStyle = false, lastTagNoDepth = false;
+        boolean inScriptOrStyle = false;
         StringBuilder builder = new StringBuilder(text.length());
         boolean addToCurr = false;
         StringBuilder curr = new StringBuilder(1024);
@@ -44,7 +44,8 @@ public class HtmlFormatter {
                         && !currString.startsWith("<html")
                         && !currString.startsWith("<meta")
                         && !currString.startsWith("<input")
-                        && !currString.startsWith("<br")) {
+                        && !currString.startsWith("<br")
+                        && !currString.startsWith("<img")) {
                     if (!currString.startsWith("</")) {
                         ++depth;
                     } 
