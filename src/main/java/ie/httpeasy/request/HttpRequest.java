@@ -25,10 +25,13 @@ public class HttpRequest {
 
     @RequestMethod
     private String method;
+
     @RequestPort
     private int port;
+
     @RequestLocation
     private String location;
+    
     @RequestMessage
     private String storedResult;
 
@@ -45,6 +48,7 @@ public class HttpRequest {
             toServer = new DataOutputStream(tempout);
             fromServer = new DataInputStream(tempin);
             location = "/";
+            method = "GET";
         } catch (IOException e) {
             client = null;
             this.port = -1;
