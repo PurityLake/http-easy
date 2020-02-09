@@ -19,7 +19,7 @@ import static ie.httpeasy.utils.HtmlFormatter.*;
 
 public class HttpRequestTest {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private final String testSuccessURL = "www.google.com";
+    private final String testSuccessURL = "www.facebook.com";
     private final String testFailURL = "www.asksmdksdn.com";
 
     @BeforeClass public static void setupLogger() {

@@ -8,11 +8,13 @@ public class HtmlFormatter {
         boolean addToCurr = false;
         StringBuilder curr = new StringBuilder(1024);
         int depth = 0;
+        boolean firstTag = false;
         char c;
 
         for (int i = 0; i < text.length(); ++i) {
             c = text.charAt(i);
             if (c == '<') {
+                firstTag = true;
                 if (inScriptOrStyle) {
                     if (text.charAt(i + 1) == '/') {
                         addToCurr = true;
@@ -25,14 +27,9 @@ public class HtmlFormatter {
             if (addToCurr) {
                 curr.append(c);
             } else {
-                builder.append(c);
-                if (c == '\n') {
-                    ++depth;
-                    for (int j = 0; j < depth * indentSize; ++j) {
-                        builder.append(' ');
-                    }
-                    --depth;
-                }
+                if (!firstTag || inScriptOrStyle || !Character.isWhitespace(c)) {
+                    builder.append(c);
+                } 
             }
             if (c == '>' && !inScriptOrStyle) {
                 String currString = curr.toString();
@@ -40,19 +37,21 @@ public class HtmlFormatter {
                         || currString.startsWith("<style")) {
                     inScriptOrStyle = true;
                 }
-                if (!currString.startsWith("<!doctype")
-                        && !currString.startsWith("<html")
-                        && !currString.startsWith("<meta")
-                        && !currString.startsWith("<input")
-                        && !currString.startsWith("<br")
-                        && !currString.startsWith("<img")) {
+                String lower = currString.toLowerCase();
+                if (!lower.startsWith("<!doctype")
+                        && !lower.startsWith("<html")
+                        && !lower.startsWith("<meta")
+                        && !lower.startsWith("<input")
+                        && !lower.startsWith("<br")
+                        && !lower.startsWith("<img")) {
                     if (!currString.startsWith("</")) {
                         ++depth;
-                    } 
-                    //++depth;
-                    lastTagNoDepth = false;
-                } else {
-                    lastTagNoDepth = true;
+                    }
+                }
+                if (Character.isWhitespace(builder.charAt(builder.length() - 1))) {
+                    do {
+                        builder.setLength(builder.length() - 1);
+                    } while (Character.isWhitespace(builder.charAt(builder.length() - 1)));
                 }
                 builder.append('\n');
                 for (int j = 0; j < depth * indentSize; ++j) {
