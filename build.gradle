@@ -28,3 +28,7 @@ jar {
                    'Implementation-Version': project.version)
     }
 }
+
+task doc(type: Javadoc) {
+    source = sourceSets.main.allJava
+}
