@@ -15,11 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import static ie.httpeasy.utils.HtmlFormatter.*;
-
 public class HttpRequestTest {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private final String testSuccessURL = "www.facebook.com";
+    private final String testSuccessURL = "www.google.com";
     private final String testFailURL = "www.asksmdksdn.com";
 
     @BeforeClass public static void setupLogger() {
@@ -40,13 +38,19 @@ public class HttpRequestTest {
         }
     }
     @Test public void testConnection() {
-        HttpRequest classUnderTest = new HttpRequest(testSuccessURL);
-        LOGGER.info(formatText(classUnderTest.get("/").getStored()));
-        //LOGGER.info(formatText(classUnderTest.setRequest("/").get().getStored()));
-        assertTrue("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionSuccessful());
-        assertFalse("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionFailed());
-        classUnderTest = new HttpRequest(testFailURL);
-        assertFalse("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionSuccessful());
-        assertTrue("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionFailed());
+        try {
+            HttpRequest classUnderTest = new HttpRequest(testSuccessURL);
+            assertTrue("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionSuccessful());
+            assertFalse("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionFailed());
+        } catch (IOException e) {
+            assertTrue("Failed to make connections.", false);
+        }
+        try {
+            HttpRequest classUnderTest = new HttpRequest(testFailURL);
+            assertFalse("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionSuccessful());
+            assertTrue("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionFailed());
+        } catch (IOException e) {
+
+        }
     }
 }
