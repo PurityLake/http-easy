@@ -16,7 +16,7 @@ public class HttpResponseTest {
                     .setLocation("/")
                     .GET()
                     .process());
-            assertTrue("Expected a 200 status", response.isOK());
+            assertTrue("Expected a 200 status from " + testURL, response.isOK());
             //System.out.println(response.getResponseString());
             //System.out.println(response.getResponseMessage());
         } catch (HttpException e) {
