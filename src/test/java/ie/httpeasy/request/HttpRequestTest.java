@@ -3,6 +3,8 @@ package ie.httpeasy.request;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ie.httpeasy.exceptions.HttpException;
+
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -40,15 +42,15 @@ public class HttpRequestTest {
             HttpRequest classUnderTest = new HttpRequest(testSuccessURL);
             assertTrue("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionSuccessful());
             assertFalse("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionFailed());
-        } catch (IOException e) {
+        } catch (HttpException e) {
             assertTrue("Failed to make connections.", false);
         }
         try {
             HttpRequest classUnderTest = new HttpRequest(testFailURL);
             assertFalse("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionSuccessful());
             assertTrue("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionFailed());
-        } catch (IOException e) {
-
+        } catch (HttpException e) {
+            
         }
     }
 }

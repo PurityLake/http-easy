@@ -16,6 +16,10 @@ import ie.httpeasy.annotations.RequestLocation;
 import ie.httpeasy.annotations.RequestMessage;
 import ie.httpeasy.annotations.RequestMethod;
 import ie.httpeasy.annotations.RequestPort;
+import ie.httpeasy.exceptions.HttpConnectionException;
+import ie.httpeasy.exceptions.HttpException;
+import ie.httpeasy.exceptions.HttpStreamReadException;
+import ie.httpeasy.exceptions.HttpStreamWriteException;
 
 @Request
 public class HttpRequest {
@@ -35,10 +39,11 @@ public class HttpRequest {
     @RequestMessage
     private String storedResult;
 
-    public HttpRequest(String serverName) throws IOException {
+    public HttpRequest(String serverName) throws HttpException {
         this(serverName, 80);
     }
-    public HttpRequest(String serverName, int port) throws IOException {
+    
+    public HttpRequest(String serverName, int port) throws HttpException {
         System.out.printf("Connecting to '%s' on port %d\n", serverName, port);
         try {
             client = new Socket(serverName, port);
@@ -54,8 +59,7 @@ public class HttpRequest {
             this.port = -1;
             toServer = null;
             fromServer = null;
-            System.err.println("Connection failed!");
-            throw e;
+            throw new HttpConnectionException("Conection failed!", e);
         }
     }
 
@@ -76,13 +80,13 @@ public class HttpRequest {
         return this;
     }
 
-    public HttpRequest process() throws IOException {
+    public HttpRequest process() throws HttpException {
         if (!location.isEmpty() && !method.isEmpty()) {
             try {
                 toServer.writeBytes(method + " " + location + " \r\n\r\n");
             } catch (IOException e) {
-                System.err.println("Failed to write to output stream!");
-                throw e;
+                throw new HttpStreamWriteException(
+                    "Failed to write to output stream!", e);
             }
             StringBuilder builder = new StringBuilder(1024);
             try {
@@ -95,7 +99,8 @@ public class HttpRequest {
                 
             } catch (IOException e) {
                 System.err.println("Failed to read from input stream!");
-                throw e;
+                throw new HttpStreamReadException(
+                    "Failed to read from input stream!", e);
             }
             storedResult = builder.toString();
         }
