@@ -43,7 +43,7 @@ public class HttpRequestTest {
             assertTrue("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionSuccessful());
             assertFalse("Connection to " + testSuccessURL + " should work!", classUnderTest.isConnectionFailed());
         } catch (HttpException e) {
-            assertTrue("Failed to make connections.", false);
+            assertTrue("Failed to make connection to " + testSuccessURL, false);
         }
         try {
             HttpRequest classUnderTest = new HttpRequest(testFailURL);

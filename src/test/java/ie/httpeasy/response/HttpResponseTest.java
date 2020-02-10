@@ -16,11 +16,11 @@ public class HttpResponseTest {
                     .setLocation("/")
                     .GET()
                     .process());
-            assertEquals("Expected a 200 status", "200", response.responeCode());
+            assertTrue("Expected a 200 status", response.isOK());
             //System.out.println(response.getResponseString());
             //System.out.println(response.getResponseMessage());
         } catch (HttpException e) {
-            assertTrue("Failed to make connections.", false);
+            assertTrue("Failed to make connection to " + testURL, false);
         }
     }
 }

@@ -60,6 +60,10 @@ public class HttpResponse {
         }
     }
 
+    public boolean isOK() {
+        return responseCode.equals("200");
+    }
+
     public String httpVersion() {
         return httpVersion;
     }
