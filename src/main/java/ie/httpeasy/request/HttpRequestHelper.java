@@ -18,7 +18,7 @@ public final class HttpRequestHelper {
             HttpRequest out = (new HttpRequest(serverName, port)).setLocation(location);
             switch (method) {
                 case "GET":
-                    out.get();
+                    out.GET();
             }
             return out.process();
         } catch (HttpException e) {
