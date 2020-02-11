@@ -9,9 +9,9 @@ import java.io.OutputStream;
 import java.net.*;
 
 import ie.httpeasy.annotations.Request;
-import ie.httpeasy.annotations.RequestLocation;
 import ie.httpeasy.annotations.RequestMessage;
 import ie.httpeasy.annotations.RequestMethod;
+import ie.httpeasy.annotations.RequestPath;
 import ie.httpeasy.annotations.RequestPort;
 import ie.httpeasy.exceptions.HttpConnectionException;
 import ie.httpeasy.exceptions.HttpException;
@@ -25,7 +25,7 @@ import ie.httpeasy.exceptions.HttpStreamWriteException;
  * Example Usage
  * <pre>{@code
  * HttpRequest example = new HttpRequest("www.google.com")
- *      .setLocation("/")
+ *      .setpath("/")
  *      .GET()
  *      .process();
  * System.out.println(example.getStored());
@@ -43,8 +43,8 @@ public class HttpRequest {
     @RequestPort
     private int port;
 
-    @RequestLocation
-    private String location;
+    @RequestPath
+    private String path;
     
     @RequestMessage
     private String storedResult;
@@ -73,7 +73,7 @@ public class HttpRequest {
             InputStream tempin = client.getInputStream();
             toServer = new DataOutputStream(tempout);
             fromServer = new DataInputStream(tempin);
-            location = "/";
+            path = "/";
             method = "GET";
             storedResult = "";
         } catch (IOException e) {
@@ -95,12 +95,12 @@ public class HttpRequest {
     }
 
     /**
-     * Sets the location part of the request i.e. the part after the domain name.
-     * @param location The location to be requested
-     * @return The current object after location is set
+     * Sets the path part of the request i.e. the part after the domain name.
+     * @param path The path to be requested
+     * @return The current object after path is set
      */
-    public HttpRequest setLocation(String location) {
-        this.location = location;
+    public HttpRequest setPath(String path) {
+        this.path = path;
         return this;
     }
 
@@ -120,9 +120,9 @@ public class HttpRequest {
      * @return The current object after thr process is finished
      */
     public HttpRequest process() throws HttpException {
-        if (!location.isEmpty() && !method.isEmpty()) {
+        if (!path.isEmpty() && !method.isEmpty()) {
             try {
-                toServer.writeBytes(method + " " + location + " \r\n\r\n");
+                toServer.writeBytes(method + " " + path + " \r\n\r\n");
             } catch (IOException e) {
                 throw new HttpStreamWriteException(
                     "Failed to write to output stream!", e);

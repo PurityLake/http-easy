@@ -13,7 +13,7 @@ public class HttpResponseTest {
         try {
             HttpResponse response = new HttpResponse(
                 new HttpRequest(testURL)
-                    .setLocation("/")
+                    .setPath("/")
                     .GET()
                     .process());
             assertTrue("Expected a 200 status from " + testURL, response.isOK());

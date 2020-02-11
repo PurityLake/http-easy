@@ -15,7 +15,7 @@ public final class HttpRequestHelper {
 
     public static HttpRequest makeHttpRequest(String serverName, String method, String location, int port) {
         try {
-            HttpRequest out = (new HttpRequest(serverName, port)).setLocation(location);
+            HttpRequest out = (new HttpRequest(serverName, port)).setPath(location);
             switch (method) {
                 case "GET":
                     out.GET();

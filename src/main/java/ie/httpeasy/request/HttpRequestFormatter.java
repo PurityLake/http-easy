@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 import ie.httpeasy.annotations.Request;
-import ie.httpeasy.annotations.RequestLocation;
 import ie.httpeasy.annotations.RequestMessage;
 import ie.httpeasy.annotations.RequestMethod;
+import ie.httpeasy.annotations.RequestPath;
 import ie.httpeasy.annotations.RequestPort;
 import ie.httpeasy.utils.HtmlFormatter;
 
@@ -29,7 +29,7 @@ public final class HttpRequestFormatter {
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 try {
-                    if (field.isAnnotationPresent(RequestLocation.class)) {
+                    if (field.isAnnotationPresent(RequestPath.class)) {
                         location = (String)field.get(object);
                     } else if (field.isAnnotationPresent(RequestMessage.class)) {
                         storedResult = (String)field.get(object);
