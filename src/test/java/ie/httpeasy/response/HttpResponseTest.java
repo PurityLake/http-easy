@@ -1,6 +1,5 @@
 package ie.httpeasy.response;
 
-import ie.httpeasy.exceptions.HttpException;
 import ie.httpeasy.request.HttpRequest;
 import ie.httpeasy.response.HttpResponse;
 
@@ -10,16 +9,14 @@ import static org.junit.Assert.*;
 public class HttpResponseTest {
     private final String testURL = "www.google.com";
     @Test public void testResponse() {
-        try {
+        try (HttpRequest request = new HttpRequest(testURL)) {
             HttpResponse response = new HttpResponse(
-                new HttpRequest(testURL)
+                request
                     .setPath("/")
                     .GET()
                     .process());
             assertTrue("Expected a 200 status from " + testURL, response.isOK());
-            //System.out.println(response.getResponseString());
-            //System.out.println(response.getResponseMessage());
-        } catch (HttpException e) {
+        } catch (Exception e) {
             assertTrue("Failed to make connection to " + testURL, false);
         }
     }

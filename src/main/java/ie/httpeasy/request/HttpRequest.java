@@ -1,5 +1,6 @@
 package ie.httpeasy.request;
 
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -32,7 +33,7 @@ import ie.httpeasy.exceptions.HttpStreamWriteException;
  * }</pre>
  */
 @Request
-public class HttpRequest {
+public class HttpRequest implements Closeable {
     private Socket client;
     private DataOutputStream toServer;
     private DataInputStream fromServer;
@@ -167,5 +168,16 @@ public class HttpRequest {
      */
     public boolean isConnectionFailed() {
         return !isConnectionSuccessful();
+    }
+
+    @Override
+    public void close() throws IOException {
+        port = -1;
+        if (fromServer != null) fromServer.close();
+        if (toServer != null) toServer.close();
+        if (client != null) client.close();
+        fromServer = null;
+        toServer = null;
+        client = null;
     }
 }

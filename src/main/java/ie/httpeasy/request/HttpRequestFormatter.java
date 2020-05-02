@@ -11,7 +11,7 @@ import ie.httpeasy.annotations.RequestPort;
 import ie.httpeasy.utils.HtmlFormatter;
 
 public final class HttpRequestFormatter {
-    public static boolean isRequest(Object object) {
+    private static boolean isRequest(Object object) {
         if (Objects.isNull(object)) {
             return false;
         }
