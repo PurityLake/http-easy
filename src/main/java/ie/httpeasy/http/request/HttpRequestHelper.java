@@ -12,10 +12,10 @@ public final class HttpRequestHelper {
 
     public static HttpRequest makeHttpRequest(String serverName, String method, String location, int port) {
         try (HttpRequest out = new HttpRequest(serverName, port)) {
-            out.setPath(location);
+            out.set(HttpRequest.PATH, location);
             switch (method) {
                 case "GET":
-                    out.methodGET();
+                    out.set(HttpRequest.METHOD, HttpRequest.GET);
             }
             return out.process();
         } catch (Exception e) {

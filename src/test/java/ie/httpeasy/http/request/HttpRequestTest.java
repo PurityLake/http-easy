@@ -55,9 +55,9 @@ public class HttpRequestTest {
     @Test public void testFormatting() {
         try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
             classUnderTest
-                .setPath("/")
-                .HTTP1_1()
-                .methodGET()
+                .set(HttpRequest.PATH, "/")
+                .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
+                .set(HttpRequest.METHOD, HttpRequest.GET)
                 .addHeader("Host", "http-easy");
             assertEquals(requestTestString, HttpRequestFormatter.requestToString(classUnderTest));
         } catch (Exception e) {
@@ -68,15 +68,15 @@ public class HttpRequestTest {
     @Test public void testGettingValueWithGet() {
         try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
             classUnderTest
-                .setPath("/")
-                .HTTP1_1()
-                .methodGET()
+                .set(HttpRequest.PATH, "/")
+                .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
+                .set(HttpRequest.METHOD, HttpRequest.GET)
                 .addHeader("Host", "http-easy")
                 .addHeader("Test", "value");
-            assertEquals("/", classUnderTest.get("#path").get());
-            assertEquals("HTTP/1.1", classUnderTest.get("#version").get());
-            assertEquals("GET", classUnderTest.get("#method").get());
-            assertEquals("80", classUnderTest.get("#port").get());
+            assertEquals("/", classUnderTest.get(HttpRequest.PATH).get());
+            assertEquals("HTTP/1.1", classUnderTest.get(HttpRequest.VERSION).get());
+            assertEquals("GET", classUnderTest.get(HttpRequest.METHOD).get());
+            assertEquals("80", classUnderTest.get(HttpRequest.PORT).get());
             assertEquals("http-easy", classUnderTest.get("Host").get());
             assertEquals("value", classUnderTest.get("Test").get());
         } catch (Exception e) {

@@ -1,6 +1,5 @@
 package ie.httpeasy.http.request;
 
-import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -11,6 +10,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import ie.httpeasy.interfaces.Request;
 import ie.httpeasy.http.annotations.*;
 import ie.httpeasy.http.exceptions.HttpConnectionException;
 import ie.httpeasy.http.exceptions.HttpException;
@@ -31,8 +31,17 @@ import ie.httpeasy.utils.MutablePair;
  * System.out.println(example.getStored());
  * }</pre>
  */
-@Request
-public class HttpRequest implements Closeable {
+@RequestTag
+public class HttpRequest implements Request {
+    public static final String HTTP_VERSION_1 = "HTTP/1";
+    public static final String HTTP_VERSION_1_1 = "HTTP/1.1";
+    public static final String METHOD = "#method";
+    public static final String VERSION = "#version";
+    public static final String PATH = "#path";
+    public static final String PORT = "#port";
+    public static final String GET = "GET";
+    public static final String SET = "SET";
+
     private Socket client;
     private DataOutputStream toServer;
     private DataInputStream fromServer;
@@ -92,16 +101,7 @@ public class HttpRequest implements Closeable {
         }
     }
 
-    public HttpRequest HTTP1_1() {
-        version = "HTTP/1.1";
-        return this;
-    }
-
-    public HttpRequest HTTP1() {
-        version = "HTTP/1";
-        return this;
-    }
-
+    @Override
     public HttpRequest addHeader(String key, String value) {
         MutablePair<String, String> temp = new MutablePair<>(key, value);
         if (!headers.contains(temp)) {
@@ -110,6 +110,7 @@ public class HttpRequest implements Closeable {
         return this;
     }
 
+    @Override
     public HttpRequest removeHeader(String key) {
         for (int i = 0; i < headers.size(); ++i) {
             if (key.equals(headers.get(i).key())) {
@@ -120,6 +121,7 @@ public class HttpRequest implements Closeable {
         return this;
     }
 
+    @Override
     public HttpRequest editHeader(String key, String value) {
         for (int i = 0; i < headers.size(); ++i) {
             MutablePair<String, String> temp = headers.get(i);
@@ -131,6 +133,7 @@ public class HttpRequest implements Closeable {
         return this;
     }
 
+    @Override
     public HttpRequest editOrAddHeader(String key, String value) {
         boolean added = false;
         for (int i = 0; i < headers.size(); ++i) {
@@ -148,30 +151,12 @@ public class HttpRequest implements Closeable {
     }
 
     /**
-     * Sets the path part of the request i.e. the part after the domain name.
-     * @param path The path to be requested
-     * @return The current object after path is set
-     */
-    public HttpRequest setPath(String path) {
-        this.path = path;
-        return this;
-    }
-
-    /**
-     * Makes the current HTTP method GET.
-     * @return The current object after method is set
-     */
-    public HttpRequest methodGET() {
-        method = "GET";
-        return this;
-    }
-
-    /**
      * Processes the request object and stores the message in the class before
      * it is passed onto a @{code HttpResponse} object.
      * @throws HttpException Throws if there was an error reading from or writing to the server
      * @return The current object after thr process is finished
      */
+    @Override
     public HttpRequest process() throws HttpException {
         if (!path.isEmpty() && !method.isEmpty()) {
             try {
@@ -210,6 +195,7 @@ public class HttpRequest implements Closeable {
      * Returns the message that the request object recieved after {@code process()}
      * @return The message received after <pre>process</pre>
      */
+    @Override
     public String getStored() {
         return storedResult;
     }
@@ -218,6 +204,7 @@ public class HttpRequest implements Closeable {
      * Whether the connection was successful
      * @return If connection was successful
      */
+    @Override
     public boolean isConnectionSuccessful() {
         return (client != null) && (port > 0);
     }
@@ -226,19 +213,21 @@ public class HttpRequest implements Closeable {
      * Whether the connection was unsuccessful
      * @return If connection was unsucessful
      */
+    @Override
     public boolean isConnectionFailed() {
         return !isConnectionSuccessful();
     }
 
+    @Override
     public Optional<String> get(String val) {
         switch (val) {
-            case "#version":
+            case VERSION:
                 return Optional.of(version);
-            case "#path":
+            case PATH:
                 return Optional.of(path);
-            case "#method":
+            case METHOD:
                 return Optional.of(method);
-            case "#port":
+            case PORT:
                 return Optional.of(Integer.toString(port));
             default:
                 for (MutablePair<String, String> i : headers) {
@@ -248,6 +237,28 @@ public class HttpRequest implements Closeable {
                 }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Request set(String key, String value) {
+        switch (key) {
+            case VERSION:
+                version = value;
+                break;
+            case PATH:
+                path = value;
+                break;
+            case METHOD:
+                method = value;
+                break;
+            case PORT:
+                port = Integer.parseInt(value);
+                break;
+            default:
+                editOrAddHeader(key, value);
+                break;
+        }
+        return this;
     }
 
     @Override

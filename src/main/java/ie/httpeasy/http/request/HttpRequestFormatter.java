@@ -13,7 +13,7 @@ public final class HttpRequestFormatter {
         if (Objects.isNull(object)) {
             return false;
         }
-        return object.getClass().isAnnotationPresent(Request.class);
+        return object.getClass().isAnnotationPresent(RequestTag.class);
     }
 
     public static String requestToString(Object object) {

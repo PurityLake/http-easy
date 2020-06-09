@@ -1,7 +1,6 @@
 package ie.httpeasy.http.response;
 
 import ie.httpeasy.http.request.HttpRequest;
-import ie.httpeasy.http.response.HttpResponse;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -11,9 +10,10 @@ public class HttpResponseTest {
     @Test public void testResponse() {
         try (HttpRequest request = new HttpRequest(testURL)) {
             HttpResponse response = new HttpResponse(
-                request
-                    .setPath("/")
-                    .methodGET()
+                (HttpRequest)request
+                    .set(HttpRequest.PATH, "/")
+                    .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
+                    .set(HttpRequest.METHOD, HttpRequest.GET)
                     .process());
             assertTrue("Expected a 200 status from " + testURL, response.isOK());
         } catch (Exception e) {
