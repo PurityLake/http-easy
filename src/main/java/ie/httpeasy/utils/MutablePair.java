@@ -9,6 +9,10 @@ public class MutablePair<T, U> {
         val = value;
     }
 
+    public boolean equals(MutablePair<T, U> other) {
+        return k.equals(other.k) && val.equals(other.val);
+    }
+
     public T key() {
         return k;
     }

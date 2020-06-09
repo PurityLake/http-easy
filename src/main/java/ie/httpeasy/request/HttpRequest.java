@@ -87,6 +87,51 @@ public class HttpRequest implements Closeable {
         }
     }
 
+    public HttpRequest addHeader(String key, String value) {
+        MutablePair<String, String> temp = new MutablePair<>(key, value);
+        if (!headers.contains(temp)) {
+            headers.add(temp);
+        }
+        return this;
+    }
+
+    public HttpRequest removeHeader(String key) {
+        for (int i = 0; i < headers.size(); ++i) {
+            if (key.equals(headers.get(i).key())) {
+                headers.remove(i);
+                break;
+            }
+        }
+        return this;
+    }
+
+    public HttpRequest editHeader(String key, String value) {
+        for (int i = 0; i < headers.size(); ++i) {
+            MutablePair<String, String> temp = headers.get(i);
+            if (temp.key().equals(key)) {
+                temp.value(value);
+                break;
+            }
+        }
+        return this;
+    }
+
+    public HttpRequest editOrAddHeader(String key, String value) {
+        boolean added = false;
+        for (int i = 0; i < headers.size(); ++i) {
+            MutablePair<String, String> temp = headers.get(i);
+            if (temp.key().equals(key)) {
+                temp.value(value);
+                added = true;
+                break;
+            }
+        }
+        if (!added) {
+            headers.add(new MutablePair<String, String>(key, value));
+        }
+        return this;
+    }
+
     /**
      * Cleans up the streams and socket when garbage collected.
      */
@@ -113,10 +158,6 @@ public class HttpRequest implements Closeable {
      */
     public HttpRequest GET() {
         method = "GET";
-        return this;
-    }
-
-    public HttpRequest addHeader(String name, String value) {
         return this;
     }
 
