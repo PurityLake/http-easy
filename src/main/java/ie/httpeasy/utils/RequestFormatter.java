@@ -1,14 +1,13 @@
-package ie.httpeasy.http.request;
+package ie.httpeasy.utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Objects;
 
-import ie.httpeasy.http.annotations.*;
-import ie.httpeasy.utils.MutablePair;
+import ie.httpeasy.annotations.*;
 
-public final class HttpRequestFormatter {
+public final class RequestFormatter {
     private static boolean isRequest(Object object) {
         if (Objects.isNull(object)) {
             return false;

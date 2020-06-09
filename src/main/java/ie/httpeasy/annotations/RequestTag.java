@@ -1,4 +1,4 @@
-package ie.httpeasy.http.annotations;
+package ie.httpeasy.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface RequestPort {
+@Target(ElementType.TYPE)
+public @interface RequestTag {
 }

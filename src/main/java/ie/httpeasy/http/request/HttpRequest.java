@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import ie.httpeasy.interfaces.Request;
-import ie.httpeasy.http.annotations.*;
+import ie.httpeasy.annotations.*;
 import ie.httpeasy.http.exceptions.HttpConnectionException;
 import ie.httpeasy.http.exceptions.HttpException;
 import ie.httpeasy.http.exceptions.HttpStreamReadException;
 import ie.httpeasy.http.exceptions.HttpStreamWriteException;
 import ie.httpeasy.utils.MutablePair;
+import ie.httpeasy.utils.RequestFormatter;
 
 /**
  * HttpRequest stores and executes a GET, POST, UPDATE, DELETE requests.
@@ -40,11 +41,11 @@ public class HttpRequest implements Request {
     public static final String PATH = "#path";
     public static final String PORT = "#port";
     public static final String GET = "GET";
-    public static final String SET = "SET";
+    public static final String POST = "POST";
 
     private Socket client;
-    private DataOutputStream toServer;
-    private DataInputStream fromServer;
+    private OutputStream out;
+    private InputStream in;
 
     @RequestVersion
     private String version;
@@ -69,7 +70,7 @@ public class HttpRequest implements Request {
      * @param url The url to be reached by the request. 
      * @throws HttpException Throws in there was an error creating the socket.
      */
-    public HttpRequest(String url) throws HttpException {
+    public HttpRequest(final String url) throws HttpException {
         this(url, 80);
     }
 
@@ -79,31 +80,29 @@ public class HttpRequest implements Request {
      * @param port The port to make the request on
      * @throws HttpException Throws in there was an error creating the socket.
      */
-    public HttpRequest(String url, int port) throws HttpException {
+    public HttpRequest(final String url, final int port) throws HttpException {
         try {
             client = new Socket(url, port);
             version = "HTTP/1.1";
             this.port = port;
-            OutputStream tempout = client.getOutputStream();
-            InputStream tempin = client.getInputStream();
-            toServer = new DataOutputStream(tempout);
-            fromServer = new DataInputStream(tempin);
+            out = new DataOutputStream(client.getOutputStream());
+            in = new DataInputStream(client.getInputStream());
             path = "/";
             method = "GET";
             storedResult = "";
             headers = new ArrayList<>();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             client = null;
             this.port = -1;
-            toServer = null;
-            fromServer = null;
+            out = null;
+            in = null;
             throw new HttpConnectionException("Conection failed!", e);
         }
     }
 
     @Override
-    public HttpRequest addHeader(String key, String value) {
-        MutablePair<String, String> temp = new MutablePair<>(key, value);
+    public HttpRequest addHeader(final String key, final String value) {
+        final MutablePair<String, String> temp = new MutablePair<>(key, value);
         if (!headers.contains(temp)) {
             headers.add(temp);
         }
@@ -111,7 +110,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest removeHeader(String key) {
+    public HttpRequest removeHeader(final String key) {
         for (int i = 0; i < headers.size(); ++i) {
             if (key.equals(headers.get(i).key())) {
                 headers.remove(i);
@@ -122,9 +121,9 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest editHeader(String key, String value) {
+    public HttpRequest editHeader(final String key, final String value) {
         for (int i = 0; i < headers.size(); ++i) {
-            MutablePair<String, String> temp = headers.get(i);
+            final MutablePair<String, String> temp = headers.get(i);
             if (temp.key().equals(key)) {
                 temp.value(value);
                 break;
@@ -134,10 +133,10 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest editOrAddHeader(String key, String value) {
+    public HttpRequest editOrAddHeader(final String key, final String value) {
         boolean added = false;
         for (int i = 0; i < headers.size(); ++i) {
-            MutablePair<String, String> temp = headers.get(i);
+            final MutablePair<String, String> temp = headers.get(i);
             if (temp.key().equals(key)) {
                 temp.value(value);
                 added = true;
@@ -160,29 +159,29 @@ public class HttpRequest implements Request {
     public HttpRequest process() throws HttpException {
         if (!path.isEmpty() && !method.isEmpty()) {
             try {
-                toServer.writeBytes(HttpRequestFormatter.requestToString(this));
-            } catch (IOException e) {
+                out.write(RequestFormatter.requestToString(this).getBytes());
+            } catch (final IOException e) {
                 throw new HttpStreamWriteException(
                     "Failed to write to output stream!", e);
             }
-            StringBuilder builder = new StringBuilder(1024);
+            final StringBuilder builder = new StringBuilder(1024);
             boolean test = false;
             int i = 0;
             try {
                 test = false;
                 char c;
                 do {
-                    c = (char)fromServer.readByte();
+                    c = (char)in.read();
                     builder.append(c);
                     ++i;
                     if (i > 4) {
-                        int len = builder.length() - 1;
+                        final int len = builder.length() - 1;
                         test = builder.charAt(len - 3) == '\r' && builder.charAt(len - 2) == '\n' && builder.charAt(len - 1) == '\r' && builder.charAt(len - 0) == '\n';
                     }
                 } while(c != '\0' && !test);
-            } catch (EOFException e) {
+            } catch (final EOFException e) {
                 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new HttpStreamReadException(
                     "Failed to read from input stream!", e);
             }
@@ -219,7 +218,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public Optional<String> get(String val) {
+    public Optional<String> get(final String val) {
         switch (val) {
             case VERSION:
                 return Optional.of(version);
@@ -230,7 +229,7 @@ public class HttpRequest implements Request {
             case PORT:
                 return Optional.of(Integer.toString(port));
             default:
-                for (MutablePair<String, String> i : headers) {
+                for (final MutablePair<String, String> i : headers) {
                     if (i.key().equals(val)) {
                         return Optional.of(i.value());
                     }
@@ -240,7 +239,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public Request set(String key, String value) {
+    public Request set(final String key, final String value) {
         switch (key) {
             case VERSION:
                 version = value;
@@ -264,11 +263,11 @@ public class HttpRequest implements Request {
     @Override
     public void close() throws IOException {
         port = -1;
-        if (fromServer != null) fromServer.close();
-        if (toServer != null) toServer.close();
+        if (in != null) in.close();
+        if (out != null) out.close();
         if (client != null) client.close();
-        fromServer = null;
-        toServer = null;
+        in = null;
+        out = null;
         client = null;
     }
 }

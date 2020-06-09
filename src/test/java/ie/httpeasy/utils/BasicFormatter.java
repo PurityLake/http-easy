@@ -1,4 +1,4 @@
-package ie.httpeasy.util;
+package ie.httpeasy.utils;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
