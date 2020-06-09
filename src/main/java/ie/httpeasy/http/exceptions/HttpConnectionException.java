@@ -1,4 +1,4 @@
-package ie.httpeasy.exceptions;
+package ie.httpeasy.http.exceptions;
 
 public class HttpConnectionException extends HttpException {
     private static final long serialVersionUID = -3354309268655553912L;

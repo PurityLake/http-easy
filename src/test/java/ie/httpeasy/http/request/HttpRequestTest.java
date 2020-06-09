@@ -1,4 +1,4 @@
-package ie.httpeasy.request;
+package ie.httpeasy.http.request;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,11 +57,30 @@ public class HttpRequestTest {
             classUnderTest
                 .setPath("/")
                 .HTTP1_1()
-                .GET()
+                .methodGET()
                 .addHeader("Host", "http-easy");
-            assertEquals(requestTestString, HttpRequestFormatter.requestToRequestString(classUnderTest));
+            assertEquals(requestTestString, HttpRequestFormatter.requestToString(classUnderTest));
         } catch (Exception e) {
             assertTrue("Unable to make connection to " + testSuccessURL, false);
+        }
+    }
+
+    @Test public void testGettingValueWithGet() {
+        try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
+            classUnderTest
+                .setPath("/")
+                .HTTP1_1()
+                .methodGET()
+                .addHeader("Host", "http-easy")
+                .addHeader("Test", "value");
+            assertEquals("/", classUnderTest.get("#path").get());
+            assertEquals("HTTP/1.1", classUnderTest.get("#version").get());
+            assertEquals("GET", classUnderTest.get("#method").get());
+            assertEquals("80", classUnderTest.get("#port").get());
+            assertEquals("http-easy", classUnderTest.get("Host").get());
+            assertEquals("value", classUnderTest.get("Test").get());
+        } catch (Exception e) {
+
         }
     }
 }

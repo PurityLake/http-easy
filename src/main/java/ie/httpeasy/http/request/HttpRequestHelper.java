@@ -1,4 +1,4 @@
-package ie.httpeasy.request;
+package ie.httpeasy.http.request;
 
 public final class HttpRequestHelper {
     
@@ -15,7 +15,7 @@ public final class HttpRequestHelper {
             out.setPath(location);
             switch (method) {
                 case "GET":
-                    out.GET();
+                    out.methodGET();
             }
             return out.process();
         } catch (Exception e) {

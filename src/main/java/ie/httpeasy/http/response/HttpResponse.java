@@ -1,10 +1,10 @@
-package ie.httpeasy.response;
+package ie.httpeasy.http.response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ie.httpeasy.request.HttpRequest;
+import ie.httpeasy.http.request.HttpRequest;
 
 public class HttpResponse {
     private String response, message;

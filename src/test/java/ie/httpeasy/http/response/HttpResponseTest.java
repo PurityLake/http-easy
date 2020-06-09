@@ -1,7 +1,7 @@
-package ie.httpeasy.response;
+package ie.httpeasy.http.response;
 
-import ie.httpeasy.request.HttpRequest;
-import ie.httpeasy.response.HttpResponse;
+import ie.httpeasy.http.request.HttpRequest;
+import ie.httpeasy.http.response.HttpResponse;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -13,9 +13,8 @@ public class HttpResponseTest {
             HttpResponse response = new HttpResponse(
                 request
                     .setPath("/")
-                    .GET()
+                    .methodGET()
                     .process());
-            
             assertTrue("Expected a 200 status from " + testURL, response.isOK());
         } catch (Exception e) {
             assertTrue("Failed to make connection to " + testURL, false);

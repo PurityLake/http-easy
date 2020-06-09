@@ -1,4 +1,4 @@
-package ie.httpeasy.exceptions;
+package ie.httpeasy.http.exceptions;
 
 public class HttpStreamReadException extends HttpException {
     private static final long serialVersionUID = 3977993434528506157L;

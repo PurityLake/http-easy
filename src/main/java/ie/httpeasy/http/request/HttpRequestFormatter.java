@@ -1,16 +1,11 @@
-package ie.httpeasy.request;
+package ie.httpeasy.http.request;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Objects;
 
-import ie.httpeasy.annotations.Request;
-import ie.httpeasy.annotations.RequestHeaders;
-import ie.httpeasy.annotations.RequestMethod;
-import ie.httpeasy.annotations.RequestPath;
-import ie.httpeasy.annotations.RequestPort;
-import ie.httpeasy.annotations.RequestVersion;
+import ie.httpeasy.http.annotations.*;
 import ie.httpeasy.utils.MutablePair;
 
 public final class HttpRequestFormatter {
@@ -21,7 +16,7 @@ public final class HttpRequestFormatter {
         return object.getClass().isAnnotationPresent(Request.class);
     }
 
-    public static String requestToRequestString(Object object) {
+    public static String requestToString(Object object) {
         if (isRequest(object)) {
             StringBuilder builder = new StringBuilder(1024);
             Formatter formatter = new Formatter(builder);

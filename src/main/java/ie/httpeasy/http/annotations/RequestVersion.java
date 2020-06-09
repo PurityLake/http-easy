@@ -1,4 +1,4 @@
-package ie.httpeasy.annotations;
+package ie.httpeasy.http.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface RequestMethod {
+public @interface RequestVersion {
 }

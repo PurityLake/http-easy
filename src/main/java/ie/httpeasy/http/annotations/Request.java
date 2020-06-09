@@ -1,4 +1,4 @@
-package ie.httpeasy.annotations;
+package ie.httpeasy.http.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

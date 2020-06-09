@@ -1,4 +1,4 @@
-package ie.httpeasy.request;
+package ie.httpeasy.http.request;
 
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -9,12 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Optional;
 
-import ie.httpeasy.annotations.*;
-import ie.httpeasy.exceptions.HttpConnectionException;
-import ie.httpeasy.exceptions.HttpException;
-import ie.httpeasy.exceptions.HttpStreamReadException;
-import ie.httpeasy.exceptions.HttpStreamWriteException;
+import ie.httpeasy.http.annotations.*;
+import ie.httpeasy.http.exceptions.HttpConnectionException;
+import ie.httpeasy.http.exceptions.HttpException;
+import ie.httpeasy.http.exceptions.HttpStreamReadException;
+import ie.httpeasy.http.exceptions.HttpStreamWriteException;
 import ie.httpeasy.utils.MutablePair;
 
 /**
@@ -25,7 +26,7 @@ import ie.httpeasy.utils.MutablePair;
  * <pre>{@code
  * HttpRequest example = new HttpRequest("www.google.com")
  *      .setpath("/")
- *      .GET()
+ *      .methodGET()
  *      .process();
  * System.out.println(example.getStored());
  * }</pre>
@@ -97,7 +98,7 @@ public class HttpRequest implements Closeable {
     }
 
     public HttpRequest HTTP1() {
-        version = "HTTP";
+        version = "HTTP/1";
         return this;
     }
 
@@ -160,7 +161,7 @@ public class HttpRequest implements Closeable {
      * Makes the current HTTP method GET.
      * @return The current object after method is set
      */
-    public HttpRequest GET() {
+    public HttpRequest methodGET() {
         method = "GET";
         return this;
     }
@@ -174,7 +175,7 @@ public class HttpRequest implements Closeable {
     public HttpRequest process() throws HttpException {
         if (!path.isEmpty() && !method.isEmpty()) {
             try {
-                toServer.writeBytes(HttpRequestFormatter.requestToRequestString(this));
+                toServer.writeBytes(HttpRequestFormatter.requestToString(this));
             } catch (IOException e) {
                 throw new HttpStreamWriteException(
                     "Failed to write to output stream!", e);
@@ -227,6 +228,26 @@ public class HttpRequest implements Closeable {
      */
     public boolean isConnectionFailed() {
         return !isConnectionSuccessful();
+    }
+
+    public Optional<String> get(String val) {
+        switch (val) {
+            case "#version":
+                return Optional.of(version);
+            case "#path":
+                return Optional.of(path);
+            case "#method":
+                return Optional.of(method);
+            case "#port":
+                return Optional.of(Integer.toString(port));
+            default:
+                for (MutablePair<String, String> i : headers) {
+                    if (i.key().equals(val)) {
+                        return Optional.of(i.value());
+                    }
+                }
+        }
+        return Optional.empty();
     }
 
     @Override
