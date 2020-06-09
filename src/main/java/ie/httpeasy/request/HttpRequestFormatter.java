@@ -59,41 +59,4 @@ public final class HttpRequestFormatter {
         }
         return null;
     }
-
-    public static String requestToString(Object object) {
-        if (isRequest(object)) {
-            StringBuilder builder = new StringBuilder(1024);
-            Formatter formatter = new Formatter(builder);
-            String method = null;
-            int port = -1;
-            String location = null;
-            ArrayList<MutablePair<String, String>> headers = null;
-            Class<?> clazz = object.getClass();
-            for (Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                try {
-                    if (field.isAnnotationPresent(RequestPath.class)) {
-                        location = (String)field.get(object);
-                    } else if (field.isAnnotationPresent(RequestMethod.class)) {
-                        method = (String)field.get(object);
-                    } else if (field.isAnnotationPresent(RequestPort.class)) {
-                        port = field.getInt(object);
-                    } else if (field.isAnnotationPresent(RequestHeaders.class)) {
-                        headers = (ArrayList<MutablePair<String, String>>)field.get(object);
-                    }
-                } catch (IllegalAccessException e) {
-                }
-            }
-            if (method != null && port != -1 && location != null) {
-                formatter.format("%s %s (port %d)\n", method, location, port);
-                for (MutablePair<String,String> header : headers) {
-                    formatter.format("%s: %s\n", header.key(), header.value());
-                }
-                formatter.close();
-                return builder.toString();
-            }
-            formatter.close();
-        }
-        return null;
-    }
 }

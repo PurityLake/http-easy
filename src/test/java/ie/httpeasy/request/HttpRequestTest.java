@@ -18,6 +18,7 @@ public class HttpRequestTest {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private final String testSuccessURL = "www.google.com";
     private final String testFailURL = "www.asksmdksdn.com";
+    private final String requestTestString = "GET / HTTP/1.1\nHost: http-easy\n\r\n\r\n";
 
     @BeforeClass public static void setupLogger() {
         LOGGER.setLevel(Level.INFO);
@@ -48,6 +49,19 @@ public class HttpRequestTest {
             assertTrue("Connection to " + testFailURL + " should not work!", classUnderTest.isConnectionFailed());
         } catch (Exception e) {
             
+        }
+    }
+
+    @Test public void testFormatting() {
+        try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
+            classUnderTest
+                .setPath("/")
+                .HTTP1_1()
+                .GET()
+                .addHeader("Host", "http-easy");
+            assertEquals(requestTestString, HttpRequestFormatter.requestToRequestString(classUnderTest));
+        } catch (Exception e) {
+            assertTrue("Unable to make connection to " + testSuccessURL, false);
         }
     }
 }

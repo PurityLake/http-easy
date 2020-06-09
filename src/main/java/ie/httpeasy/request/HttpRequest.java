@@ -147,16 +147,6 @@ public class HttpRequest implements Closeable {
     }
 
     /**
-     * Cleans up the streams and socket when garbage collected.
-     */
-    protected void finalize() throws Throwable {
-        port = -1;
-        if (fromServer != null) fromServer.close();
-        if (toServer != null) toServer.close();
-        if (client != null) client.close();
-    }
-
-    /**
      * Sets the path part of the request i.e. the part after the domain name.
      * @param path The path to be requested
      * @return The current object after path is set
