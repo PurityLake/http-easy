@@ -36,6 +36,9 @@ public class HttpRequest implements Closeable {
     private DataOutputStream toServer;
     private DataInputStream fromServer;
 
+    @RequestVersion
+    private String version;
+
     @RequestMethod
     private String method;
 
@@ -69,6 +72,7 @@ public class HttpRequest implements Closeable {
     public HttpRequest(String url, int port) throws HttpException {
         try {
             client = new Socket(url, port);
+            version = "HTTP/1.1";
             this.port = port;
             OutputStream tempout = client.getOutputStream();
             InputStream tempin = client.getInputStream();
@@ -85,6 +89,16 @@ public class HttpRequest implements Closeable {
             fromServer = null;
             throw new HttpConnectionException("Conection failed!", e);
         }
+    }
+
+    public HttpRequest HTTP1_1() {
+        version = "HTTP/1.1";
+        return this;
+    }
+
+    public HttpRequest HTTP1() {
+        version = "HTTP";
+        return this;
     }
 
     public HttpRequest addHeader(String key, String value) {

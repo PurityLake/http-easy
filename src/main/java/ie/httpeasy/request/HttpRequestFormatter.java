@@ -8,6 +8,7 @@ import ie.httpeasy.annotations.Request;
 import ie.httpeasy.annotations.RequestMethod;
 import ie.httpeasy.annotations.RequestPath;
 import ie.httpeasy.annotations.RequestPort;
+import ie.httpeasy.annotations.RequestVersion;
 
 public final class HttpRequestFormatter {
     private static boolean isRequest(Object object) {
@@ -23,6 +24,7 @@ public final class HttpRequestFormatter {
             Formatter formatter = new Formatter(builder);
             String method = null;
             String location = null;
+            String version = null;
             Class<?> clazz = object.getClass();
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
@@ -31,13 +33,15 @@ public final class HttpRequestFormatter {
                         location = (String)field.get(object);
                     } else if (field.isAnnotationPresent(RequestMethod.class)) {
                         method = (String)field.get(object);
+                    } else if (field.isAnnotationPresent(RequestVersion.class)) {
+                        version = (String)field.get(object);
                     }
                 } catch (IllegalAccessException e) {
 
                 }
             }
-            if (method != null && location != null) {
-                formatter.format("%s %s HTTP/1.1 \r\n\r\n", method, location);
+            if (method != null && location != null && version != null) {
+                formatter.format("%s %s %s \r\n\r\n", method, location, version);
                 String s = builder.toString();
                 formatter.close();
                 return s;
