@@ -37,9 +37,10 @@ public final class HttpRequestFormatter {
                 }
             }
             if (method != null && location != null) {
-                formatter.format("%s %s HTTP1.1\n", method, location);
+                formatter.format("%s %s HTTP/1.1 \r\n\r\n", method, location);
+                String s = builder.toString();
                 formatter.close();
-                return builder.toString();
+                return s;
             }
             formatter.close();
         }

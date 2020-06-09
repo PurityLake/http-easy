@@ -170,18 +170,26 @@ public class HttpRequest implements Closeable {
     public HttpRequest process() throws HttpException {
         if (!path.isEmpty() && !method.isEmpty()) {
             try {
-                toServer.writeBytes(method + " " + path + " \r\n\r\n");
+                toServer.writeBytes(HttpRequestFormatter.requestToRequestString(this));
             } catch (IOException e) {
                 throw new HttpStreamWriteException(
                     "Failed to write to output stream!", e);
             }
             StringBuilder builder = new StringBuilder(1024);
+            boolean test = false;
+            int i = 0;
             try {
+                test = false;
                 char c;
                 do {
                     c = (char)fromServer.readByte();
                     builder.append(c);
-                } while(c != '\0');
+                    ++i;
+                    if (i > 4) {
+                        int len = builder.length() - 1;
+                        test = builder.charAt(len - 3) == '\r' && builder.charAt(len - 2) == '\n' && builder.charAt(len - 1) == '\r' && builder.charAt(len - 0) == '\n';
+                    }
+                } while(c != '\0' && !test);
             } catch (EOFException e) {
                 
             } catch (IOException e) {
