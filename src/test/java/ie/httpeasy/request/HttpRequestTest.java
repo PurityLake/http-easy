@@ -3,6 +3,8 @@ package ie.httpeasy.request;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ie.httpeasy.util.BasicFormatter;
+
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -11,7 +13,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class HttpRequestTest {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -27,7 +28,7 @@ public class HttpRequestTest {
             if (handlers[0] instanceof ConsoleHandler) {
                 l.removeHandler(handlers[0]);
             }
-            fh.setFormatter(new SimpleFormatter());
+            fh.setFormatter(new BasicFormatter());
             LOGGER.addHandler(fh);
         } catch (IOException e) {
             System.err.println("Failed to open Logger.html");

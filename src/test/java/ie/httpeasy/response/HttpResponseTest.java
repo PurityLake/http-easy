@@ -15,6 +15,7 @@ public class HttpResponseTest {
                     .setPath("/")
                     .GET()
                     .process());
+            
             assertTrue("Expected a 200 status from " + testURL, response.isOK());
         } catch (Exception e) {
             assertTrue("Failed to make connection to " + testURL, false);
