@@ -8,16 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.ArrayList;
 
-import ie.httpeasy.annotations.Request;
-import ie.httpeasy.annotations.RequestMessage;
-import ie.httpeasy.annotations.RequestMethod;
-import ie.httpeasy.annotations.RequestPath;
-import ie.httpeasy.annotations.RequestPort;
+import ie.httpeasy.annotations.*;
 import ie.httpeasy.exceptions.HttpConnectionException;
 import ie.httpeasy.exceptions.HttpException;
 import ie.httpeasy.exceptions.HttpStreamReadException;
 import ie.httpeasy.exceptions.HttpStreamWriteException;
+import ie.httpeasy.utils.MutablePair;
 
 /**
  * HttpRequest stores and executes a GET, POST, UPDATE, DELETE requests.
@@ -50,6 +48,9 @@ public class HttpRequest implements Closeable {
     @RequestMessage
     private String storedResult;
 
+    @RequestHeaders
+    private ArrayList<MutablePair<String, String>> headers;
+
     /**
      * Takes a url e.g. {@code www.google.com} and defaults to port 80.
      * @param url The url to be reached by the request. 
@@ -66,7 +67,6 @@ public class HttpRequest implements Closeable {
      * @throws HttpException Throws in there was an error creating the socket.
      */
     public HttpRequest(String url, int port) throws HttpException {
-        System.out.printf("Connecting to '%s' on port %d\n", url, port);
         try {
             client = new Socket(url, port);
             this.port = port;
@@ -77,6 +77,7 @@ public class HttpRequest implements Closeable {
             path = "/";
             method = "GET";
             storedResult = "";
+            headers = new ArrayList<>();
         } catch (IOException e) {
             client = null;
             this.port = -1;
@@ -85,6 +86,7 @@ public class HttpRequest implements Closeable {
             throw new HttpConnectionException("Conection failed!", e);
         }
     }
+
     /**
      * Cleans up the streams and socket when garbage collected.
      */
@@ -111,6 +113,10 @@ public class HttpRequest implements Closeable {
      */
     public HttpRequest GET() {
         method = "GET";
+        return this;
+    }
+
+    public HttpRequest addHeader(String name, String value) {
         return this;
     }
 
