@@ -1,3 +1,3 @@
+![Build](https://github.com/PurityLake/http-easy/workflows/Build/badge.svg?branch=master)
 # http-easy
-![](https://github.com/actions/http-easy/workflows/.github/workflows/gradle.yml/badge.svg)
 HTTP even humans can read. (beginning stages)
