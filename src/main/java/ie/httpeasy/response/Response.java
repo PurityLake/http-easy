@@ -1,17 +1,17 @@
-package ie.httpeasy.http.response;
+package ie.httpeasy.response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ie.httpeasy.http.request.HttpRequest;
+import ie.httpeasy.interfaces.Request;
 
-public class HttpResponse {
+public class Response {
     private String response, message;
     private Map<String, ArrayList<String>> responseDict;
     private String httpVersion, responseCode, responseType;
 
-    public HttpResponse(HttpRequest request) {
+    public Response(Request request) {
         String stored = request.getStored();
         StringBuilder builder = new StringBuilder(1024);
         boolean lastCLRF = false;

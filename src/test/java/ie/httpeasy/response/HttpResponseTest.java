@@ -1,4 +1,4 @@
-package ie.httpeasy.http.response;
+package ie.httpeasy.response;
 
 import ie.httpeasy.http.request.HttpRequest;
 
@@ -9,8 +9,8 @@ public class HttpResponseTest {
     private final String testURL = "www.google.com";
     @Test public void testResponse() {
         try (HttpRequest request = new HttpRequest(testURL)) {
-            HttpResponse response = new HttpResponse(
-                (HttpRequest)request
+            Response response = new Response(
+                request
                     .set(HttpRequest.PATH, "/")
                     .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
                     .set(HttpRequest.METHOD, HttpRequest.GET)
