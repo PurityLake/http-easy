@@ -23,8 +23,6 @@ import ie.httpeasy.utils.RequestFormatter;
 
 @RequestTag
 public class HttpsRequest implements Request {
-    private static final String[] protocols = new String[] { "TLSv1.3" };
-    private static final String[] ciphers = new String[] { "TLS_AES_128_GCM_SHA256" };
     public static final String METHOD = "#method";
     public static final String VERSION = "#version";
     public static final String PATH = "#path";
@@ -60,9 +58,9 @@ public class HttpsRequest implements Request {
 
     public HttpsRequest(String url, int port) throws HttpsException {
         try {
-            client = (SSLSocket) SSLSocketFactory.getDefault().createSocket(url, port);
-            client.setEnabledProtocols(protocols);
-            client.setEnabledCipherSuites(ciphers);
+            client = (SSLSocket)SSLSocketFactory.getDefault().createSocket(url, port);
+            client.setEnabledProtocols(client.getSSLParameters().getProtocols());
+            client.setEnabledCipherSuites(client.getSSLParameters().getCipherSuites());
             out = new DataOutputStream(client.getOutputStream());
             in = new DataInputStream(client.getInputStream());
             this.port = port;
