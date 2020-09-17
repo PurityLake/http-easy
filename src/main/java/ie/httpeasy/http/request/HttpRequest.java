@@ -63,7 +63,7 @@ public class HttpRequest implements Request {
      * @param url The url to be reached by the request. 
      * @throws HttpException Throws in there was an error creating the socket.
      */
-    public HttpRequest(final String url) throws HttpException {
+    public HttpRequest(String url) throws HttpException {
         this(url, 80);
     }
 
@@ -73,7 +73,7 @@ public class HttpRequest implements Request {
      * @param port The port to make the request on
      * @throws HttpException Throws in there was an error creating the socket.
      */
-    public HttpRequest(final String url, final int port) throws HttpException {
+    public HttpRequest(String url, int port) throws HttpException {
         try {
             client = new Socket(url, port);
             version = "HTTP/1.1";
@@ -84,7 +84,7 @@ public class HttpRequest implements Request {
             method = "GET";
             storedResult = "";
             headers = new ArrayList<>();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             client = null;
             this.port = -1;
             out = null;
@@ -94,8 +94,8 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest addHeader(final String key, final String value) {
-        final MutablePair<String, String> temp = new MutablePair<>(key, value);
+    public HttpRequest addHeader(String key, String value) {
+        MutablePair<String, String> temp = new MutablePair<>(key, value);
         if (!headers.contains(temp)) {
             headers.add(temp);
         }
@@ -103,7 +103,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest removeHeader(final String key) {
+    public HttpRequest removeHeader(String key) {
         for (int i = 0; i < headers.size(); ++i) {
             if (key.equals(headers.get(i).key())) {
                 headers.remove(i);
@@ -114,9 +114,9 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest editHeader(final String key, final String value) {
+    public HttpRequest editHeader(String key, String value) {
         for (int i = 0; i < headers.size(); ++i) {
-            final MutablePair<String, String> temp = headers.get(i);
+            MutablePair<String, String> temp = headers.get(i);
             if (temp.key().equals(key)) {
                 temp.value(value);
                 break;
@@ -126,10 +126,10 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public HttpRequest editOrAddHeader(final String key, final String value) {
+    public HttpRequest editOrAddHeader(String key, String value) {
         boolean added = false;
         for (int i = 0; i < headers.size(); ++i) {
-            final MutablePair<String, String> temp = headers.get(i);
+            MutablePair<String, String> temp = headers.get(i);
             if (temp.key().equals(key)) {
                 temp.value(value);
                 added = true;
@@ -153,11 +153,11 @@ public class HttpRequest implements Request {
         if (!path.isEmpty() && !method.isEmpty()) {
             try {
                 out.write(RequestFormatter.requestToString(this).getBytes());
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 throw new HttpStreamWriteException(
                     "Failed to write to output stream!", e);
             }
-            final StringBuilder builder = new StringBuilder(1024);
+            StringBuilder builder = new StringBuilder(1024);
             boolean test = false;
             int i = 0;
             try {
@@ -168,13 +168,13 @@ public class HttpRequest implements Request {
                     builder.append(c);
                     ++i;
                     if (i > 4) {
-                        final int len = builder.length() - 1;
+                        int len = builder.length() - 1;
                         test = builder.charAt(len - 3) == '\r' && builder.charAt(len - 2) == '\n' && builder.charAt(len - 1) == '\r' && builder.charAt(len - 0) == '\n';
                     }
                 } while(c != '\0' && !test);
-            } catch (final EOFException e) {
+            } catch (EOFException e) {
                 
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 throw new HttpStreamReadException(
                     "Failed to read from input stream!", e);
             }
@@ -211,7 +211,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public Optional<String> get(final String val) {
+    public Optional<String> get(String val) {
         switch (val) {
             case VERSION:
                 return Optional.of(version);
@@ -222,7 +222,7 @@ public class HttpRequest implements Request {
             case PORT:
                 return Optional.of(Integer.toString(port));
             default:
-                for (final MutablePair<String, String> i : headers) {
+                for (MutablePair<String, String> i : headers) {
                     if (i.key().equals(val)) {
                         return Optional.of(i.value());
                     }
@@ -232,7 +232,7 @@ public class HttpRequest implements Request {
     }
 
     @Override
-    public Request set(final String key, final String value) {
+    public Request set(String key, String value) {
         switch (key) {
             case VERSION:
                 version = value;
