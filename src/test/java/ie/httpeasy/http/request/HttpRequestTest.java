@@ -5,6 +5,7 @@ import org.junit.Test;
 import ie.httpeasy.utils.RequestFormatter;
 
 import static org.junit.Assert.*;
+import static ie.httpeasy.utils.RequestItems.*;
 
 
 public class HttpRequestTest {
@@ -30,9 +31,9 @@ public class HttpRequestTest {
     @Test public void testFormatting() {
         try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
             classUnderTest
-                .set(HttpRequest.PATH, "/")
-                .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
-                .set(HttpRequest.METHOD, HttpRequest.GET)
+                .set(PATH, "/")
+                .set(VERSION, HTTP_VERSION_1_1)
+                .set(METHOD, GET)
                 .addHeader("Host", "http-easy");
             assertEquals(requestTestString, RequestFormatter.requestToString(classUnderTest));
         } catch (Exception e) {
@@ -43,15 +44,15 @@ public class HttpRequestTest {
     @Test public void testGettingValueWithGet() {
         try (HttpRequest classUnderTest = new HttpRequest(testSuccessURL)) {
             classUnderTest
-                .set(HttpRequest.PATH, "/")
-                .set(HttpRequest.VERSION, HttpRequest.HTTP_VERSION_1_1)
-                .set(HttpRequest.METHOD, HttpRequest.GET)
+                .set(PATH, "/")
+                .set(VERSION, HTTP_VERSION_1_1)
+                .set(METHOD, GET)
                 .addHeader("Host", "http-easy")
                 .addHeader("Test", "value");
-            assertEquals("/", classUnderTest.get(HttpRequest.PATH).get());
-            assertEquals("HTTP/1.1", classUnderTest.get(HttpRequest.VERSION).get());
-            assertEquals("GET", classUnderTest.get(HttpRequest.METHOD).get());
-            assertEquals("80", classUnderTest.get(HttpRequest.PORT).get());
+            assertEquals("/", classUnderTest.get(PATH).get());
+            assertEquals("HTTP/1.1", classUnderTest.get(VERSION).get());
+            assertEquals("GET", classUnderTest.get(METHOD).get());
+            assertEquals("80", classUnderTest.get(PORT).get());
             assertEquals("http-easy", classUnderTest.get("Host").get());
             assertEquals("value", classUnderTest.get("Test").get());
         } catch (Exception e) {

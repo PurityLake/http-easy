@@ -19,6 +19,8 @@ import ie.httpeasy.http.exceptions.HttpStreamWriteException;
 import ie.httpeasy.utils.MutablePair;
 import ie.httpeasy.utils.RequestFormatter;
 
+import static ie.httpeasy.utils.RequestItems.*;
+
 /**
  * HttpRequest stores and executes a GET, POST, UPDATE, DELETE requests.
  * Most methods returns the object after an operation to allow for chaining
@@ -34,15 +36,6 @@ import ie.httpeasy.utils.RequestFormatter;
  */
 @RequestTag
 public class HttpRequest implements Request {
-    public static final String HTTP_VERSION_1 = "HTTP/1";
-    public static final String HTTP_VERSION_1_1 = "HTTP/1.1";
-    public static final String METHOD = "#method";
-    public static final String VERSION = "#version";
-    public static final String PATH = "#path";
-    public static final String PORT = "#port";
-    public static final String GET = "GET";
-    public static final String POST = "POST";
-
     private Socket client;
     private OutputStream out;
     private InputStream in;

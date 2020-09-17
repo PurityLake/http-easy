@@ -21,15 +21,10 @@ import ie.httpeasy.interfaces.Request;
 import ie.httpeasy.utils.MutablePair;
 import ie.httpeasy.utils.RequestFormatter;
 
+import static ie.httpeasy.utils.RequestItems.*;
+
 @RequestTag
 public class HttpsRequest implements Request {
-    public static final String METHOD = "#method";
-    public static final String VERSION = "#version";
-    public static final String PATH = "#path";
-    public static final String PORT = "#port";
-    public static final String GET = "GET";
-    public static final String POST = "POST";
-
     private SSLSocket client;
     private OutputStream out;
     private InputStream in;

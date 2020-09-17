@@ -1,5 +1,7 @@
 package ie.httpeasy.http.request;
 
+import static ie.httpeasy.utils.RequestItems.*;
+
 public final class HttpRequestHelper {
     
     public static HttpRequest makeHttpRequest(String serverName, int port) {
@@ -12,10 +14,10 @@ public final class HttpRequestHelper {
 
     public static HttpRequest makeHttpRequest(String serverName, String method, String location, int port) {
         try (HttpRequest out = new HttpRequest(serverName, port)) {
-            out.set(HttpRequest.PATH, location);
+            out.set(PATH, location);
             switch (method) {
                 case "GET":
-                    out.set(HttpRequest.METHOD, HttpRequest.GET);
+                    out.set(METHOD, GET);
             }
             return out.process();
         } catch (Exception e) {

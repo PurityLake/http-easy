@@ -3,7 +3,9 @@ package ie.httpeasy.response;
 import ie.httpeasy.https.request.HttpsRequest;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+import static ie.httpeasy.utils.RequestItems.*;
 
 public class HttpsResponseTest {
     private final String testURL = "www.google.com";
@@ -12,8 +14,8 @@ public class HttpsResponseTest {
         try (HttpsRequest request = new HttpsRequest(testURL)) {
             Response response = new Response(
                 request
-                    .set(HttpsRequest.PATH, "/")
-                    .set(HttpsRequest.METHOD, HttpsRequest.GET)
+                    .set(PATH, "/")
+                    .set(METHOD, GET)
                     .process());
             assertTrue("Expected a 200 status from " + testURL, response.isOK());
         } catch (Exception e) {
